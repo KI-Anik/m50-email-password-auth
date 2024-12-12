@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import auth from '../../firebase.init';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const SignUp = () => {
     const [success, setSuccess] = useState(null)
     const [errorMessage, setErrorMessage] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
 
-    const hansleSignUp = e => {
+    const handleSignUp = e => {
         e.preventDefault()
         const email = e.target.email.value
         const password = e.target.password.value
@@ -40,18 +42,25 @@ const SignUp = () => {
 
                 </div>
                 <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-                    <form onSubmit={hansleSignUp} className="card-body">
+                    <form onSubmit={handleSignUp} className="card-body">
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text">Email</span>
                             </label>
                             <input type="email" name="email" placeholder="email" className="input input-bordered" required />
                         </div>
-                        <div className="form-control">
-                            <label className="label">
+                        <div className="form-control relative">
+                            <label className="label ">
                                 <span className="label-text">Password</span>
                             </label>
-                            <input type="password" name='password' placeholder="password" className="input input-bordered" required />
+                            <input type={showPassword ? "text" : "password"} name='password' placeholder="password" className="input input-bordered" required />
+                            <button 
+                            onClick={()=> setShowPassword(!showPassword)}
+                            className='btn btn-xs absolute right-2 top-12'>
+                                {
+                                    showPassword ? <FaEyeSlash></FaEyeSlash> : <FaEye></FaEye>
+                                }
+                                </button>
                             <label className="label">
                                 <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
                             </label>
