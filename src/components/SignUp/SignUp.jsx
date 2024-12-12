@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import auth from '../../firebase.init';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const SignUp = () => {
     const [success, setSuccess] = useState(null)
@@ -12,7 +13,8 @@ const SignUp = () => {
         e.preventDefault()
         const email = e.target.email.value
         const password = e.target.password.value
-        console.log(email, password)
+        const terms = e.target.terms.checked;
+        console.log(email, password, terms)
 
         // reset error status
         setErrorMessage('')
@@ -20,6 +22,11 @@ const SignUp = () => {
 
         if (password.length < 6) {
             setErrorMessage('password should contain at least 6 character')
+            return
+        }
+
+        if(!terms){
+            setErrorMessage('please accept terms and condition')
             return
         }
 
@@ -54,20 +61,27 @@ const SignUp = () => {
                                 <span className="label-text">Password</span>
                             </label>
                             <input type={showPassword ? "text" : "password"} name='password' placeholder="password" className="input input-bordered" required />
-                            <button 
-                            onClick={()=> setShowPassword(!showPassword)}
-                            className='btn btn-xs absolute right-2 top-12'>
+                            <p
+                                onClick={() => setShowPassword(!showPassword)}
+                                className='btn btn-xs absolute right-2 top-12'>
                                 {
                                     showPassword ? <FaEyeSlash></FaEyeSlash> : <FaEye></FaEye>
                                 }
-                                </button>
+                            </p>
                             <label className="label">
                                 <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
                             </label>
+                            <div className="form-control">
+                                <label className="label justify-start gap-4 cursor-pointer">
+                                    <input type="checkbox"  name='terms' className="checkbox checkbox-accent" />
+                                    <span className="label-text">Accept our Term's & Conditions</span>
+                                </label>
+                            </div>
                         </div>
                         <div className="form-control mt-6">
                             <button className="btn btn-primary">Sign Up</button>
                         </div>
+                            <p>Already have an account? then <Link className='underline' to={'/login'}>Log-in</Link> </p>
                     </form>
                 </div>
                 <div className='text-2xl font-semibold'>
