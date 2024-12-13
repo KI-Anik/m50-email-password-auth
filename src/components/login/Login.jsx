@@ -1,5 +1,5 @@
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import React, { useState } from 'react';
+import { sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import React, { useRef, useState } from 'react';
 import auth from '../../firebase.init';
 import { Link } from 'react-router-dom';
 
@@ -7,6 +7,7 @@ const Login = () => {
 
     const [success, setSuccess] =useState(false)
     const [logInError, setLogInError] = useState('')
+    const emailRef = useRef()
 
     const handleLogIn= e => {
         e.preventDefault()
@@ -22,12 +23,32 @@ const Login = () => {
         signInWithEmailAndPassword(auth,email,password)
         .then(result => {
             console.log(result.user)
-            setSuccess(true)
+
+
+            if(result.user.emailVerified){
+                setSuccess(true)
+            }
+            else{
+                setLogInError('please verify your email')
+            }
         })
         .catch(error => {
             console.log('ERROR', error.message)
             setLogInError(error.message)
         })
+    }
+
+    const handleForgetPass = () => {
+        const email = emailRef.current.value
+        if(!email){
+            alert('provide a valid email address')
+        }
+        else{
+            sendPasswordResetEmail(auth,email)
+            .then(()=> {
+                alert('password reset email is send, please check your mail')
+            })
+        }
     }
 
     return (
@@ -47,21 +68,21 @@ const Login = () => {
                                 <label className="label">
                                     <span className="label-text">Email</span>
                                 </label>
-                                <input type="email" name='email' placeholder="email" className="input input-bordered" required />
+                                <input ref={emailRef} type="email" name='email' placeholder="email" className="input input-bordered" required />
                             </div>
                             <div className="form-control">
                                 <label className="label">
                                     <span className="label-text">Password</span>
                                 </label>
                                 <input type="password" name='password' placeholder="password" className="input input-bordered" required />
-                                <label className="label">
+                                <label onClick={handleForgetPass} className="label">
                                     <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
                                 </label>
                             </div>
                             <div className="form-control mt-6">
                                 <button className="btn btn-primary">Login</button>
                             </div>
-                            <p>New here? please <Link className='underline' to={'/signup'}> Sign-Up </Link> </p>
+                            <p>New here? please <Link className='text-blue-700' to={'/signup'}> Sign-Up </Link>  first </p>
                             </form>
                             </div>
                         {

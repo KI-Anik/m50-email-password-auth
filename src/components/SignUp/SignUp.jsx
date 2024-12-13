@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import auth from '../../firebase.init';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ const SignUp = () => {
         const terms = e.target.terms.checked;
         console.log(email, password, terms)
 
-        // reset error status
+        // reset all status
         setErrorMessage('')
         setSuccess(false)
 
@@ -33,8 +33,14 @@ const SignUp = () => {
         // firebase
         createUserWithEmailAndPassword(auth, email, password)
             .then(result => {
-                console.log(result)
+                console.log(result.user)
                 setSuccess(true)
+
+                // send email verification
+                sendEmailVerification(auth.currentUser)
+                .then(() => {
+                    console.log('verificaton email send')
+                })
             })
             .catch(error => {
                 console.log('ERROR ', error.message)
@@ -52,9 +58,15 @@ const SignUp = () => {
                     <form onSubmit={handleSignUp} className="card-body">
                         <div className="form-control">
                             <label className="label">
-                                <span className="label-text">Email</span>
+                                <span className="label-text">Name</span>
                             </label>
-                            <input type="email" name="email" placeholder="email" className="input input-bordered" required />
+                            <input type="text" name="name" placeholder="name" className="input input-bordered" required />
+                        </div>
+                        <div className="form-control">
+                            <label className="label">
+                                <span className="label-text">Photo URl</span>
+                            </label>
+                            <input type="text" name="photo" placeholder="Photo url" className="input input-bordered" required />
                         </div>
                         <div className="form-control relative">
                             <label className="label ">
@@ -68,9 +80,7 @@ const SignUp = () => {
                                     showPassword ? <FaEyeSlash></FaEyeSlash> : <FaEye></FaEye>
                                 }
                             </p>
-                            <label className="label">
-                                <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
-                            </label>
+                           
                             <div className="form-control">
                                 <label className="label justify-start gap-4 cursor-pointer">
                                     <input type="checkbox"  name='terms' className="checkbox checkbox-accent" />
