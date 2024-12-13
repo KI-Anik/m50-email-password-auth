@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import auth from '../../firebase.init';
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
@@ -13,8 +13,10 @@ const SignUp = () => {
         e.preventDefault()
         const email = e.target.email.value
         const password = e.target.password.value
+        const name = e.target.name.value
+        const photo = e.target.photo.value
         const terms = e.target.terms.checked;
-        console.log(email, password, terms)
+        console.log(email, password, name, photo, terms)
 
         // reset all status
         setErrorMessage('')
@@ -40,6 +42,19 @@ const SignUp = () => {
                 sendEmailVerification(auth.currentUser)
                 .then(() => {
                     console.log('verificaton email send')
+                })
+
+                // update profile name and photo
+                const profile ={
+                    displayName: name,
+                    photoURL: photo
+                }
+                updateProfile(auth.currentUser, profile)
+                .then(() => {
+                    console.log('profile name and photo uploaded')
+                })
+                .catch(()=> {
+                    console.log('profile name and photo error')
                 })
             })
             .catch(error => {
@@ -68,6 +83,12 @@ const SignUp = () => {
                             </label>
                             <input type="text" name="photo" placeholder="Photo url" className="input input-bordered" required />
                         </div>
+                        <div className="form-control">
+                                <label className="label">
+                                    <span className="label-text">Email</span>
+                                </label>
+                                <input type="email" name='email' placeholder="email" className="input input-bordered" required />
+                            </div>
                         <div className="form-control relative">
                             <label className="label ">
                                 <span className="label-text">Password</span>
